@@ -1,6 +1,7 @@
 #ifndef PRISONNIER_H
 #define PRISONNIER_H
 #include<QString>
+#include <QSqlQueryModel>
 #include<QDate>
 class Prisonnier{
 private:
@@ -17,6 +18,7 @@ public:
     void setCrime(QString);
     void setCIN(QString);
     void setDate(QDate);
+   // QSqlQueryModel* afficher();
     QString getId();
     QString getNom();
     QString getPrenom();
