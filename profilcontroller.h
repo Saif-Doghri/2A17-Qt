@@ -11,8 +11,9 @@ public:
     void ajouterProfil(Profil& p);
     QSqlTableModel* afficherProfils();
     void modifierProfil(Profil& p,QString id);
-    QSqlTableModel* afficherProfil(QString id);
+    QSqlTableModel* afficherProfil(QString dept);
     void supprimerProfil(QString id);
+    QSqlTableModel* trierProfils();
 };
 
 #endif // PROFILCONTROLLER_H

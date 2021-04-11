@@ -1,12 +1,13 @@
 #include "Agent.h"
 #include <QCryptographicHash>
 #include <QtAlgorithms>
-Agent::Agent(QString nom,QString prenom,int age,QString cin,QDate date){
+Agent::Agent(QString nom,QString prenom,int age,QString cin,QString mdp,QDate date){
     this->nom=nom;
     this->prenom=prenom;
     this->age=age;
     this->cin=cin;
     this->date_naissance=date;
+    this->mdp=mdp;
     this->id=QString(QCryptographicHash::hash((this->nom+this->prenom).toLocal8Bit(),QCryptographicHash::Md5).toBase64());
 }
 
@@ -16,6 +17,10 @@ void Agent::setAge(int a){
 
 void Agent::setNom(QString nom){
     this->nom=nom;
+}
+
+void Agent::setMdp(QString mdp){
+    this->mdp=mdp;
 }
 
 void Agent::setPrenom(QString prenom){
@@ -44,6 +49,10 @@ QString Agent::getPrenom(){
 
 QString Agent::getCIN(){
     return this->cin;
+}
+
+QString Agent::getMdp(){
+    return this->mdp;
 }
 
 int Agent::getAge(){

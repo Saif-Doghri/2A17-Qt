@@ -4,7 +4,7 @@
 #include <QSqlTableModel>
 #include <QTableView>
 void profilController::ajouterProfil(Profil &p){
-    QSqlDatabase* db=Config::ouvrirConnexion();
+    //QSqlDatabase* db=Config::ouvrirConnexion();
     QSqlQuery ajout;
     QSqlTableModel* agenttable =new QSqlTableModel;
     agenttable->setTable("profils");
@@ -30,11 +30,11 @@ void profilController::ajouterProfil(Profil &p){
         qDebug() << ajout.executedQuery();
         qDebug() <<ajout.lastError().text();
     }
-    Config::fermerConnexion(*db);
+    //Config::fermerConnexion(*db);
 }
 
 QSqlTableModel* profilController::afficherProfils(){
-    QSqlDatabase* db=Config::ouvrirConnexion();
+    //QSqlDatabase* db=Config::ouvrirConnexion();
     QSqlQuery ajout;
     QSqlTableModel* agenttable =new QSqlTableModel;
     agenttable->setTable("profils");
@@ -53,12 +53,12 @@ QSqlTableModel* profilController::afficherProfils(){
         qDebug() << ajout.executedQuery();
         qDebug() <<ajout.lastError().text();
     }
-    Config::fermerConnexion(*db);
+    //Config::fermerConnexion(*db);
     return agenttable;
 }
 
 void profilController::modifierProfil(Profil &p, QString id){
-    QSqlDatabase* db=Config::ouvrirConnexion();
+    //QSqlDatabase* db=Config::ouvrirConnexion();
     QSqlQuery ajout;
     QSqlTableModel* agenttable =new QSqlTableModel;
     agenttable->setTable("profils");
@@ -84,35 +84,36 @@ void profilController::modifierProfil(Profil &p, QString id){
         qDebug() << ajout.executedQuery();
         qDebug() <<ajout.lastError().text();
     }
-    Config::fermerConnexion(*db);
+    //Config::fermerConnexion(*db);
 }
 
-QSqlTableModel* profilController::afficherProfil(QString id){
-    QSqlDatabase* db=Config::ouvrirConnexion();
+QSqlTableModel* profilController::afficherProfil(QString dept){
+    //QSqlDatabase* db=Config::ouvrirConnexion();
     QSqlQuery ajout;
     QSqlTableModel* agenttable =new QSqlTableModel;
     agenttable->setTable("profils");
-    if(ajout.prepare("SELECT * FROM profils WHERE idprofil=:id")){
+    if(ajout.prepare("SELECT * FROM profils WHERE departement=:dept")){
             qDebug() << "Query Prepared";
     }else{
         qDebug() << "Failed to Prepare Query";
     }
-    ajout.bindValue(":id",id);
+    ajout.bindValue(":dept",dept);
     if(ajout.exec()){
         qDebug() << "Success";
         if(agenttable->select()){
+            agenttable->setFilter("departement='"+dept+"'");
             qDebug() << "Fetch Complete";
         }
     }else{
         qDebug() << ajout.executedQuery();
         qDebug() <<ajout.lastError().text();
     }
-    Config::fermerConnexion(*db);
+    //Config::fermerConnexion(*db);
     return agenttable;
 }
 
 void profilController::supprimerProfil(QString id){
-    QSqlDatabase* db=Config::ouvrirConnexion();
+    //QSqlDatabase* db=Config::ouvrirConnexion();
     QSqlQuery ajout;
     if(ajout.prepare("DELETE FROM profils WHERE idprofil=:id")){
             qDebug() << "Query Prepared";
@@ -127,5 +128,30 @@ void profilController::supprimerProfil(QString id){
         qDebug() << ajout.executedQuery();
         qDebug() <<ajout.lastError().text();
     }
-    Config::fermerConnexion(*db);
+    //Config::fermerConnexion(*db);
+}
+
+QSqlTableModel* profilController::trierProfils(){
+    //QSqlDatabase* db=Config::ouvrirConnexion();
+    QSqlQuery ajout;
+    QSqlTableModel* agenttable =new QSqlTableModel;
+    agenttable->setTable("profils");
+    if(ajout.prepare("SELECT * FROM profils")){
+            qDebug() << "Query Prepared";
+    }else{
+        qDebug() << "Failed to Prepare Query";
+    }
+
+    if(ajout.exec()){
+        qDebug() << "Success";
+        if(agenttable->select()){
+            agenttable->sort(3,Qt::AscendingOrder);
+            qDebug() << "Fetch Complete";
+        }
+    }else{
+        qDebug() << ajout.executedQuery();
+        qDebug() <<ajout.lastError().text();
+    }
+    //Config::fermerConnexion(*db);
+    return agenttable;
 }

@@ -1,5 +1,7 @@
 QT       += core gui
 QT       += sql
+QT += printsupport
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
@@ -11,10 +13,8 @@ CONFIG += sql
 SOURCES += \
     Agent.cpp \
     AgentController.cpp \
-    afficher.cpp \
-    ajouter.cpp \
     main.cpp \
-    modifier.cpp \
+    mainwindow.cpp \
     profil.cpp \
     profilcontroller.cpp
 
@@ -22,16 +22,12 @@ HEADERS += \
     Agent.h \
     AgentController.h \
     Config.h \
-    afficher.h \
-    ajouter.h \
-    modifier.h \
+    mainwindow.h \
     profil.h \
     profilcontroller.h
 
 FORMS += \
-    afficher.ui \
-    ajouter.ui \
-    modifier.ui
+    mainwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
