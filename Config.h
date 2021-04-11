@@ -11,12 +11,10 @@ private:
 public:
     static QSqlDatabase* ouvrirConnexion(){
         QSqlDatabase *db= new QSqlDatabase;
-        *db=QSqlDatabase::addDatabase("QMYSQL");
-        db->setHostName("localhost");
-        db->setPort(3306);
-        db->setUserName("root");
-        db->setPassword("");
-        db->setDatabaseName("projetc++");
+        *db=QSqlDatabase::addDatabase("QODBC");
+        db->setUserName("Saif");
+        db->setPassword("Esprit21");
+        db->setDatabaseName("Projet2A");
         if(db->open()){
             qDebug() << "Successfully started database";
         }else{
