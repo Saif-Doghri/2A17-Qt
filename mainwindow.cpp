@@ -9,11 +9,29 @@
 #include <QtPrintSupport/QPrinter>
 #include <QFileDialog>
 #include <QTextDocument>
+#include "qr.h"
+#include <QTimer>
+#include <QRegularExpression>
+
+
+using namespace qrcodegen;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    /*
+    int res=A.connect_arduino();
+    if(res==-1){
+        qDebug()<<"Arduino not Connected";
+        exit(-1);
+    }else if(res==1){
+        qDebug()<<"Arduino Found but not Connected";
+        exit(1);
+    }else{
+        qDebug()<<"Arduino Connected Successfully";
+    }
+    setTimer();*/
     ui->setupUi(this);
     ui->tableView->setSortingEnabled(true);
     ui->tableView_2->setSortingEnabled(true);
@@ -66,14 +84,14 @@ void MainWindow::on_pushButton_clicked()
     //mylayout->addWidget(agentlist);
     this->ui->tableView->horizontalHeader()->setStretchLastSection(true);
     this->ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    this->ui->tableView->model()->setHeaderData(0,Qt::Horizontal,tr("Nom"));
-    this->ui->tableView->model()->setHeaderData(1,Qt::Horizontal,tr("Prenom"));
-    this->ui->tableView->model()->setHeaderData(2,Qt::Horizontal,tr("Mot de Passe"));
-    this->ui->tableView->model()->setHeaderData(3,Qt::Horizontal,tr("Age"));
-    this->ui->tableView->model()->setHeaderData(4,Qt::Horizontal,tr("CIN"));
-    this->ui->tableView->model()->setHeaderData(5,Qt::Horizontal,tr("Date Naissance"));
+    this->ui->tableView->model()->setHeaderData(1,Qt::Horizontal,tr("Nom"));
+    this->ui->tableView->model()->setHeaderData(2,Qt::Horizontal,tr("Prenom"));
+    this->ui->tableView->model()->setHeaderData(3,Qt::Horizontal,tr("Mot de Passe"));
+    this->ui->tableView->model()->setHeaderData(4,Qt::Horizontal,tr("Age"));
+    this->ui->tableView->model()->setHeaderData(5,Qt::Horizontal,tr("CIN"));
+    this->ui->tableView->model()->setHeaderData(6,Qt::Horizontal,tr("Date Naissance"));
     this->ui->tableView->model()->setHeaderData(7,Qt::Horizontal,tr("Droits"));
-    this->ui->tableView->hideColumn(6);
+    this->ui->tableView->hideColumn(0);
 }
 
 void MainWindow::on_pushButton_4_clicked()
@@ -97,17 +115,61 @@ void MainWindow::on_pushButton_3_clicked()
 
 void MainWindow::on_pushButton_6_clicked()
 {
+
+    bool ajout=true;
+    QRegularExpression mdpreg("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$");
+    QRegularExpression nomreg("^(?=.{1,40}$)[a-zA-Z]+(?:[-'\\s][a-zA-Z]+)*$");
+    QRegularExpression cinreg("(?<!\\d)\\d{8}(?!\\d)");
+   // QRegularExpression agereg("^(0?[1-9]|[1-9][0-9]|[1][1-9][1-9]|200)$");
     QString Nom=this->ui->nom->text();
+    if(!nomreg.match(Nom).hasMatch()){
+        ui->nomErrorAjout->setText("Le Nom doit etre compose que de lettres!");
+        ui->nomErrorAjout->setStyleSheet("QLabel  {color : red; }");
+        ajout=false;
+    }else{
+        ui->nomErrorAjout->setText("");
+    }
     QString Prenom=this->ui->prenom->text();
+    if(!nomreg.match(Prenom).hasMatch()){
+        ui->PrenomErrorAjout->setText("Le Prenom doit etre compose que de lettres!");
+        ui->PrenomErrorAjout->setStyleSheet("QLabel  {color : red; }");
+        ajout=false;
+    }else{
+        ui->PrenomErrorAjout->setText("");
+    }
     QString Cin=this->ui->cin->text();
+    if(!cinreg.match(Cin).hasMatch()){
+        ui->CINErrorAjout->setText("Le CIN doit etre compose de 8 Chiffres!");
+        ui->CINErrorAjout->setStyleSheet("QLabel  {color : red; }");
+        ajout=false;
+    }else{
+        ui->CINErrorAjout->setText("");
+    }
     QString Mdp=this->ui->mdp->text();
+    if(!mdpreg.match(Mdp).hasMatch()){
+        ui->MdpErrorAjout2->setText("Le Mdp doit etre compose de 8 caracteres avec une lettre speciale et un chiffre au minimum!");
+        ui->MdpErrorAjout2->setStyleSheet("QLabel  {color : red; }");
+        ajout=false;
+    }else{
+        ui->MdpErrorAjout2->setText("");
+    }
     int Age=this->ui->age->text().toInt();
+    if(!(typeid(Age)==typeid (int) && (Age >18 && Age <60))){
+        ui->AgeErrorAjout->setText("L Age doit etre compose que de chiffres >17 et <61!");
+        ui->AgeErrorAjout->setStyleSheet("QLabel  {color : red; }");
+        ajout=false;
+    }else{
+        ui->AgeErrorAjout->setText("");
+    }
     QDate dateNaissance=this->ui->dateEdit->date();
     Agent agent(Nom,Prenom,Age,Cin,Mdp,dateNaissance);
     AgentController agentc;
-    agentc.ajouterAgent(agent);
-    this->ui->tableView->setModel(agentc.afficherAgents());
-    this->ui->stackedWidget->setCurrentIndex(1);
+    if(ajout){
+        agentc.ajouterAgent(agent);
+        this->ui->tableView->setModel(agentc.afficherAgents());
+        this->ui->stackedWidget->setCurrentIndex(1);
+    }
+
 }
 
 void MainWindow::on_tableView_clicked(const QModelIndex &index)
@@ -139,18 +201,59 @@ void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
 
 void MainWindow::on_pushButton_7_clicked()
 {
+    bool ajout=true;
+    QRegularExpression mdpreg("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$");
+    QRegularExpression nomreg("^(?=.{1,40}$)[a-zA-Z]+(?:[-'\\s][a-zA-Z]+)*$");
+    QRegularExpression cinreg("(?<!\\d)\\d{8}(?!\\d)");
     QString newnom=this->ui->nomModif->text();
+    if(nomreg.match(newnom).hasMatch()){
+        ui->nomErrorModif->setText("Le Nom doit etre compose que de lettres!");
+        ui->nomErrorModif->setStyleSheet("QLabel  {color : red; }");
+        ajout=false;
+    }else{
+         ui->nomErrorModif->setText("");
+    }
     QString newprenom=this->ui->prenomModif->text();
+    if(nomreg.match(newprenom).hasMatch()){
+        ui->PrenomErrorModif->setText("Le Prenom doit etre compose que de lettres!");
+        ui->PrenomErrorModif->setStyleSheet("QLabel  {color : red; }");
+        ajout=false;
+    }else{
+         ui->PrenomErrorModif->setText("");
+    }
     QString newcin=this->ui->cinModif->text();
+    if(cinreg.match(newcin).hasMatch()){
+        ui->CINErrorModif->setText("Le CIN doit etre compose de 8 chiffres!");
+        ui->CINErrorModif->setStyleSheet("QLabel  {color : red; }");
+        ajout=false;
+    }else{
+         ui->CINErrorModif->setText("");
+    }
     QString newmdp=this->ui->mdpModif->text();
+    if(mdpreg.match(newmdp).hasMatch()){
+        ui->MdpErrorModif2->setText("Le Mdp doit etre compose de 8 caracteres dont 1 special et 1 Majus et 1 Chiffre!");
+        ui->MdpErrorModif2->setStyleSheet("QLabel  {color : red; }");
+        ajout=false;
+    }else{
+         ui->MdpErrorModif2->setText("");
+    }
     int newage=this->ui->ageModif->text().toInt();
+    if(!(typeid(newage)==typeid (int) && (newage >18 && newage <60))){
+        ui->AgeErrorModif->setText("L Age doit etre compose que de chiffres >17 et <61!");
+        ui->AgeErrorModif->setStyleSheet("QLabel  {color : red; }");
+        ajout=false;
+    }else{
+        ui->AgeErrorModif->setText("");
+    }
     QDate newdateNaissance=this->ui->dateNaissanceModif->date();
     Agent agent(newnom,newprenom,newage,newcin,newmdp,newdateNaissance);
     AgentController agentc;
-    agentc.modifierAgent(agent,this->getCurrentId());
-    QSqlTableModel *agenttable=agentc.afficherAgents();
-    this->ui->tableView->setModel(agenttable);
-    this->ui->stackedWidget->setCurrentIndex(1);
+    if(ajout){
+        agentc.modifierAgent(agent,this->getCurrentId());
+        QSqlTableModel *agenttable=agentc.afficherAgents();
+        this->ui->tableView->setModel(agenttable);
+        this->ui->stackedWidget->setCurrentIndex(1);
+    }
 }
 
 void MainWindow::on_pushButton_9_clicked()
@@ -282,7 +385,7 @@ void MainWindow::on_pushButton_16_clicked()
     profilc.modifierProfil(profil,this->getCurrentId());
     QSqlTableModel *profiltable=profilc.afficherProfils();
     this->ui->tableView_2->setModel(profiltable);
-    this->ui->stackedWidget->setCurrentIndex(4);
+    this->ui->stackedWidget->setCurrentIndex(5);
 }
 
 void MainWindow::on_pushButton_14_clicked()
@@ -307,14 +410,17 @@ void MainWindow::on_buttonSignIn_clicked()
     QString mdpAgent=this->ui->mdpSignIn->text();
     AgentController agentc;
     QSqlTableModel* mymodel=agentc.authenticateAgent(nomAgent,mdpAgent);
-
+    qDebug() <<mymodel->record(0).value("nomagent").toString();
     if(mymodel->rowCount()==0){
             QMessageBox * newmessage1=new QMessageBox(this);
             newmessage1->setModal(true);
             newmessage1->setText("Wrong Data");
             newmessage1->exec();
    }else{
-            if(nomAgent.toLower()=="root"){
+            if(mymodel->record(0).value("droitAccesAgent")=="Banned"){
+                QMessageBox* newmessage=new QMessageBox(this);
+                newmessage->critical(this,"Banned User","Banned User");
+            }else if(nomAgent.toLower()=="root"){
                 this->setSessionId("root");
                 this->ui->stackedWidget->setCurrentIndex(2);
             }else{
@@ -504,5 +610,57 @@ void MainWindow::on_pushButton_21_clicked()
         this->ui->tableView_2->setModel(mymodel);
     }else{
         this->ui->tableView_2->setModel(mymodel);
+    }
+}
+
+void MainWindow::on_modifierDroits_2_clicked()
+{
+    this->ui->stackedWidget->setCurrentIndex(1);
+}
+
+void MainWindow::on_pushButton_22_clicked()
+{
+        QString ids;
+        ids="ID: "+getCurrentId()+" Session: "+this->getSessionId()+" Date de debut: "+QDate::currentDate().toString();
+        QrCode qr = QrCode::encodeText(ids.toUtf8().constData(), QrCode::Ecc::HIGH);
+
+        // Read the black & white pixels
+        QImage im(qr.getSize(),qr.getSize(), QImage::Format_RGB888);
+        for (int y = 0; y < qr.getSize(); y++) {
+            for (int x = 0; x < qr.getSize(); x++) {
+                int color = qr.getModule(x, y);  // 0 for white, 1 for black
+
+                // You need to modify this part
+                if(color==0)
+                    im.setPixel(x, y,qRgb(254, 254, 254));
+                else
+                    im.setPixel(x, y,qRgb(0, 0, 0));
+            }
+        }
+        im=im.scaled(200,200);
+        ui->qrlabel->setPixmap(QPixmap::fromImage(im));
+}
+
+
+void MainWindow::setTimer(){
+    timer.start();
+    timer.setInterval(500);
+    connect(&timer,SIGNAL(timeout()),this,SLOT(toggleArd()));
+}
+
+void MainWindow::toggleArd(){
+    qDebug() << "Arduino Circuit Activated";
+    data="1";
+    A.write_to_arduino(data);
+    data=A.read_from_arduino();
+    qDebug() << data;
+    if(data=="1"){
+        QMessageBox * message=new QMessageBox();
+        message->setText("Notification:Citoyen detecte");
+        message->addButton(new QPushButton("Stop"),QMessageBox::YesRole);
+        int result = message->exec();
+        if(result==QMessageBox::Yes){
+            A.write_to_arduino("0");
+        }
     }
 }

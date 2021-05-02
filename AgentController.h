@@ -4,6 +4,7 @@
 #include "Config.h"
 #include <QSqlTableModel>
 #include <QTableView>
+#include <QMessageBox>
 class AgentController{
 private:
     QSqlDatabase db;

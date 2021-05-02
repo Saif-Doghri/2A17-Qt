@@ -55,5 +55,5 @@ QString Profil::getId(){
 }
 
 QString Profil::toString(){
-    return this->departement+" "+this->grade+" "+this->date_embauche.toString();
+    return this->departement+" "+this->grade+" "+this->date_embauche.toString("yyyy/MM/dd");
 }

@@ -6,9 +6,9 @@ void AgentController::ajouterAgent(Agent &a){
     //QSqlDatabase* db=Config::ouvrirConnexion();
     QSqlQuery ajout;
     QSqlTableModel* agenttable =new QSqlTableModel;
-    agenttable->setTable("agents");
-    if(ajout.prepare("INSERT INTO agents(idagent,nomagent,prenomagent,passwordAgent,ageagent,cinagent,date_naissance_agent)"
-                     " VALUES(:id,:nom,:prenom,:mdp,:age,:cin,:date_naissance)")){
+    agenttable->setTable("AGENTS");
+    if(ajout.prepare("INSERT INTO AGENTS(idagent,nomagent,prenomagent,passwordAgent,ageagent,cinagent,date_naissance_agent)"
+                     " VALUES(:id,:nom,:prenom,:mdp,:age,:cin,TO_DATE(:date_naissance,'YYYY/MM/dd'))")){
             qDebug() << "Query Prepared";
     }else{
         qDebug() << "Failed to Prepare Query";
@@ -20,11 +20,15 @@ void AgentController::ajouterAgent(Agent &a){
     ajout.bindValue(":age",a.getAge());
     ajout.bindValue(":cin",a.getCIN());
     ajout.bindValue(":mdp",a.getMdp());
-    ajout.bindValue(":date_naissance",a.getDate().toString("yyyy-MM-dd"));
+    ajout.bindValue(":date_naissance",a.getDate().toString("yyyy/MM/dd"));
+    //qDebug() << "Date Format = "<<a.getDate().toString("yyyy/MM/dd");
     if(ajout.exec()){
         qDebug() << "Success";
         if(agenttable->select()){
             qDebug() << "Insertion Complete";
+            QMessageBox * message =new QMessageBox();
+            message->setText("Agent ajoute avec succes");
+            message->exec();
         }
     }else{
         qDebug() << ajout.executedQuery();
@@ -37,8 +41,8 @@ QSqlTableModel* AgentController::afficherAgents(){
     //QSqlDatabase* db=Config::ouvrirConnexion();
     QSqlQuery ajout;
     QSqlTableModel* agenttable =new QSqlTableModel;
-    agenttable->setTable("agents");
-    if(ajout.prepare("SELECT * FROM agents")){
+    agenttable->setTable("AGENTS");
+    if(ajout.prepare("SELECT * FROM AGENTS")){
             qDebug() << "Query Prepared";
     }else{
         qDebug() << "Failed to Prepare Query";
@@ -61,8 +65,8 @@ void AgentController::modifierAgent(Agent &a, QString id){
     //QSqlDatabase* db=Config::ouvrirConnexion();
     QSqlQuery ajout;
     QSqlTableModel* agenttable =new QSqlTableModel;
-    agenttable->setTable("agents");
-    if(ajout.prepare("UPDATE agents SET nomagent=:nom,prenomagent=:prenom,passwordAgent=:mdp,ageagent=:age,cinagent=:cin,date_naissance_agent=:date_naissance"
+    agenttable->setTable("AGENTS");
+    if(ajout.prepare("UPDATE AGENTS SET nomagent=:nom,prenomagent=:prenom,passwordAgent=:mdp,ageagent=:age,cinagent=:cin,date_naissance_agent=TO_DATE(:date_naissance,'YYYY/MM/dd')"
                      " WHERE idagent=:id")){
             qDebug() << "Query Prepared";
     }else{
@@ -75,11 +79,15 @@ void AgentController::modifierAgent(Agent &a, QString id){
     ajout.bindValue(":age",a.getAge());
     ajout.bindValue(":cin",a.getCIN());
     ajout.bindValue(":mdp",a.getMdp());
-    ajout.bindValue(":date_naissance",a.getDate().toString("yyyy-MM-dd"));
+    ajout.bindValue(":date_naissance",a.getDate().toString("yyyy/MM/dd"));
     if(ajout.exec()){
         qDebug() << "Success";
         if(agenttable->select()){
             qDebug() << "Update Complete";
+            qDebug() << "Insertion Complete";
+            QMessageBox * message =new QMessageBox();
+            message->setText("Agent modifie avec succes");
+            message->exec();
         }
     }else{
         qDebug() << ajout.executedQuery();
@@ -92,8 +100,8 @@ QSqlTableModel* AgentController::afficherAgent(QString nom){
     //QSqlDatabase* db=Config::ouvrirConnexion();
     QSqlQuery ajout;
     QSqlTableModel* agenttable =new QSqlTableModel;
-    agenttable->setTable("agents");
-    if(ajout.prepare("SELECT * FROM agents WHERE nomagent=:nom")){
+    agenttable->setTable("AGENTS");
+    if(ajout.prepare("SELECT * FROM AGENTS WHERE nomagent=:nom")){
             qDebug() << "Query Prepared";
     }else{
         qDebug() << "Failed to Prepare Query";
@@ -116,7 +124,7 @@ QSqlTableModel* AgentController::afficherAgent(QString nom){
 void AgentController::supprimerAgent(QString id){
     //QSqlDatabase* db=Config::ouvrirConnexion();
     QSqlQuery ajout;
-    if(ajout.prepare("DELETE FROM agents WHERE idagent=:id")){
+    if(ajout.prepare("DELETE FROM AGENTS WHERE idagent=:id")){
             qDebug() << "Query Prepared";
     }else{
         qDebug() << "Failed to Prepare Query";
@@ -125,6 +133,10 @@ void AgentController::supprimerAgent(QString id){
     if(ajout.exec()){
         qDebug() << "Success";
         qDebug() << "Delete Complete";
+        qDebug() << "Insertion Complete";
+        QMessageBox * message =new QMessageBox();
+        message->setText("Agent supprime avec succes");
+        message->exec();
     }else{
         qDebug() << ajout.executedQuery();
         qDebug() <<ajout.lastError().text();
@@ -136,8 +148,8 @@ QSqlTableModel* AgentController::trierAgents(){
     //QSqlDatabase* db=Config::ouvrirConnexion();
     QSqlQuery ajout;
     QSqlTableModel* agenttable =new QSqlTableModel;
-    agenttable->setTable("agents");
-    if(ajout.prepare("SELECT * FROM agents")){
+    agenttable->setTable("AGENTS");
+    if(ajout.prepare("SELECT * FROM AGENTS ORDER BY nomagent ASC")){
             qDebug() << "Query Prepared";
     }else{
         qDebug() << "Failed to Prepare Query";
@@ -146,8 +158,12 @@ QSqlTableModel* AgentController::trierAgents(){
     if(ajout.exec()){
         qDebug() << "Success";
         if(agenttable->select()){
-            agenttable->sort(0,Qt::AscendingOrder);
+            agenttable->sort(1,Qt::AscendingOrder);
             qDebug() << "Sort Complete";
+            qDebug() << "Insertion Complete";
+            QMessageBox * message =new QMessageBox();
+            message->setText("Liste des Agents trie avec succes");
+            message->exec();
         }
     }else{
         qDebug() << ajout.executedQuery();
@@ -160,8 +176,8 @@ QSqlTableModel* AgentController::trierAgents(){
 QSqlTableModel* AgentController::authenticateAgent(QString nom,QString mdp){
     QSqlQuery ajout;
     QSqlTableModel* agenttable =new QSqlTableModel;
-    agenttable->setTable("agents");
-    if(ajout.prepare("SELECT * FROM agents")){
+    agenttable->setTable("AGENTS");
+    if(ajout.prepare("SELECT * FROM AGENTS")){
             qDebug() << "Query Prepared";
     }else{
         qDebug() << "Failed to Prepare Query";
@@ -172,6 +188,7 @@ QSqlTableModel* AgentController::authenticateAgent(QString nom,QString mdp){
         if(agenttable->select()){
             agenttable->setFilter("nomagent='"+nom+"' and passwordAgent='"+mdp+"'");
             qDebug() << "Search Complete";
+
         }
     }else{
         qDebug() << ajout.executedQuery();

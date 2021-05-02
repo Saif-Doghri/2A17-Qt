@@ -2,7 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-
+#include "arduino.h"
+#include <QTimer>
 namespace Ui {
 class MainWindow;
 }
@@ -24,8 +25,11 @@ public:
     void setCurrentId(QString str);
     void setSessionId(QString str);
     void setStatus(QString str);
+    void setTimer();
 
 private slots:
+    void toggleArd();
+
     void on_pushButton_clicked();
 
     void on_pushButton_4_clicked();
@@ -94,8 +98,15 @@ private slots:
 
     void on_pushButton_21_clicked();
 
+    void on_modifierDroits_2_clicked();
+
+    void on_pushButton_22_clicked();
+
 private:
     Ui::MainWindow *ui;
+    QByteArray data;
+    QTimer timer;
+    Arduino A;
 };
 
 #endif // MAINWINDOW_H

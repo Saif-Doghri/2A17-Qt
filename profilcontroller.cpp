@@ -7,20 +7,21 @@ void profilController::ajouterProfil(Profil &p){
     //QSqlDatabase* db=Config::ouvrirConnexion();
     QSqlQuery ajout;
     QSqlTableModel* agenttable =new QSqlTableModel;
-    agenttable->setTable("profils");
-    if(ajout.prepare("INSERT INTO profils(idprofil,grade,fonction,salaire,departement,date_embauche)"
-                     " VALUES(:id,:grade,:fonction,:salaire,:departement,:date_embauche)")){
+    agenttable->setTable("PROFILS");
+    if(ajout.prepare("INSERT INTO PROFILS(idprofil,grade,fonction,salaire,departement,date_embauche)"
+                     " VALUES(:id,:grade,:fonction,:salaire,:departement,to_date(:date_embauche,'YYYY/MM/dd') )")){
             qDebug() << "Query Prepared";
     }else{
         qDebug() << "Failed to Prepare Query";
     }
-    qDebug() <<"Data Received : " <<p.toString();
+    qDebug() <<"Data Received : " <<p.toString() << " ID: "<<p.getId() << " Departement : "<<p.getDepartement() << " Salaire : "<<p.getSalaire();
     ajout.bindValue(":id",p.getId());
     ajout.bindValue(":grade",p.getGrade());
     ajout.bindValue(":salaire",p.getSalaire());
     ajout.bindValue(":departement",p.getDepartement());
     ajout.bindValue(":fonction",p.getFonction());
-    ajout.bindValue(":date_embauche",p.getDateEmbauche().toString("yyyy-MM-dd"));
+    ajout.bindValue(":date_embauche",p.getDateEmbauche().toString("yyyy/MM/dd"));
+    qDebug() << p.getDateEmbauche().toString("yyyy/MM/dd");
     if(ajout.exec()){
         qDebug() << "Success";
         if(agenttable->select()){
@@ -37,8 +38,8 @@ QSqlTableModel* profilController::afficherProfils(){
     //QSqlDatabase* db=Config::ouvrirConnexion();
     QSqlQuery ajout;
     QSqlTableModel* agenttable =new QSqlTableModel;
-    agenttable->setTable("profils");
-    if(ajout.prepare("SELECT * FROM profils")){
+    agenttable->setTable("PROFILS");
+    if(ajout.prepare("SELECT * FROM PROFILS")){
             qDebug() << "Query Prepared";
     }else{
         qDebug() << "Failed to Prepare Query";
@@ -61,8 +62,8 @@ void profilController::modifierProfil(Profil &p, QString id){
     //QSqlDatabase* db=Config::ouvrirConnexion();
     QSqlQuery ajout;
     QSqlTableModel* agenttable =new QSqlTableModel;
-    agenttable->setTable("profils");
-    if(ajout.prepare("UPDATE profils SET grade=:grade,fonction=:fonction,departement=:departement,salaire=:salaire,date_embauche=:date_embauche"
+    agenttable->setTable("PROFILS");
+    if(ajout.prepare("UPDATE PROFILS SET grade=:grade,fonction=:fonction,departement=:departement,salaire=:salaire,date_embauche=TO_DATE(:date_embauche,'YYYY/MM/dd')"
                      " WHERE idprofil=:id")){
             qDebug() << "Query Prepared";
     }else{
@@ -74,7 +75,7 @@ void profilController::modifierProfil(Profil &p, QString id){
     ajout.bindValue(":salaire",p.getSalaire());
     ajout.bindValue(":departement",p.getDepartement());
     ajout.bindValue(":fonction",p.getFonction());
-    ajout.bindValue(":date_embauche",p.getDateEmbauche().toString("yyyy-MM-dd"));
+    ajout.bindValue(":date_embauche",p.getDateEmbauche().toString("yyyy/MM/dd"));
     if(ajout.exec()){
         qDebug() << "Success";
         if(agenttable->select()){
@@ -91,8 +92,8 @@ QSqlTableModel* profilController::afficherProfil(QString dept){
     //QSqlDatabase* db=Config::ouvrirConnexion();
     QSqlQuery ajout;
     QSqlTableModel* agenttable =new QSqlTableModel;
-    agenttable->setTable("profils");
-    if(ajout.prepare("SELECT * FROM profils WHERE departement=:dept")){
+    agenttable->setTable("PROFILS");
+    if(ajout.prepare("SELECT * FROM PROFILS WHERE departement=:dept")){
             qDebug() << "Query Prepared";
     }else{
         qDebug() << "Failed to Prepare Query";
@@ -102,7 +103,7 @@ QSqlTableModel* profilController::afficherProfil(QString dept){
         qDebug() << "Success";
         if(agenttable->select()){
             agenttable->setFilter("departement='"+dept+"'");
-            qDebug() << "Fetch Complete";
+            qDebug() << "Fetch Complete Departement = "<<dept;
         }
     }else{
         qDebug() << ajout.executedQuery();
@@ -115,7 +116,7 @@ QSqlTableModel* profilController::afficherProfil(QString dept){
 void profilController::supprimerProfil(QString id){
     //QSqlDatabase* db=Config::ouvrirConnexion();
     QSqlQuery ajout;
-    if(ajout.prepare("DELETE FROM profils WHERE idprofil=:id")){
+    if(ajout.prepare("DELETE FROM PROFILS WHERE idprofil=:id")){
             qDebug() << "Query Prepared";
     }else{
         qDebug() << "Failed to Prepare Query";
@@ -135,8 +136,8 @@ QSqlTableModel* profilController::trierProfils(){
     //QSqlDatabase* db=Config::ouvrirConnexion();
     QSqlQuery ajout;
     QSqlTableModel* agenttable =new QSqlTableModel;
-    agenttable->setTable("profils");
-    if(ajout.prepare("SELECT * FROM profils")){
+    agenttable->setTable("PROFILS");
+    if(ajout.prepare("SELECT * FROM PROFILS ORDER BY departement ASC")){
             qDebug() << "Query Prepared";
     }else{
         qDebug() << "Failed to Prepare Query";

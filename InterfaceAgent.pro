@@ -1,6 +1,6 @@
 QT       += core gui
 QT       += sql
-QT += printsupport
+QT += printsupport serialport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -13,18 +13,22 @@ CONFIG += sql
 SOURCES += \
     Agent.cpp \
     AgentController.cpp \
+    arduino.cpp \
     main.cpp \
     mainwindow.cpp \
     profil.cpp \
-    profilcontroller.cpp
+    profilcontroller.cpp \
+    qr.cpp
 
 HEADERS += \
     Agent.h \
     AgentController.h \
     Config.h \
+    arduino.h \
     mainwindow.h \
     profil.h \
-    profilcontroller.h
+    profilcontroller.h \
+    qr.h
 
 FORMS += \
     mainwindow.ui
