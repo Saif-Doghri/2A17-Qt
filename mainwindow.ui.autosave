@@ -109,7 +109,7 @@
        </rect>
       </property>
      </widget>
-     <widget class="QLabel" name="label">
+     <widget class="QLabel" name="label_Matricule">
       <property name="geometry">
        <rect>
         <x>20</x>
