@@ -297,7 +297,7 @@
      <widget class="QLabel" name="qrlabel">
       <property name="geometry">
        <rect>
-        <x>260</x>
+        <x>190</x>
         <y>350</y>
         <width>81</width>
         <height>71</height>

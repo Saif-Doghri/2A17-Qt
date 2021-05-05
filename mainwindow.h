@@ -66,6 +66,8 @@ private slots:
 
     void on_pdf_clicked();
 
+    void on_QR_clicked();
+
 private:
     Ui::MainWindow *ui;
     VehiculeController V;

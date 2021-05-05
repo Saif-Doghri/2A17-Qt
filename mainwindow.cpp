@@ -10,6 +10,9 @@
 #include <QPainter>
 #include <QFileDialog>
 #include <QTextDocument>
+#include <QRegularExpression>
+#include "qr.h"
+using namespace qrcodegen;
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -55,14 +58,36 @@ QString MainWindow::getidP()
 
 void MainWindow::on_Ajouter_clicked()
 {
-  QString matricule=ui->matricule->text();
+  bool ajout=true;
+  QRegularExpression matriculeV("^[0-9]{1,3}[\\s][A-Z]{1,3}[\\s][0-9]{1,4}$‎");
+  QRegularExpression marqueV("^(?=.{1,40}$)[a-zA-Z]+(?:[-'\\s][a-zA-Z]+)*$");
+  QRegularExpression typeV("^(?=.{1,40}$)[a-zA-Z]+(?:[-'\\s][a-zA-Z]+)*$");
+  QString matriculeA=ui->matricule->text();
+ if(!matriculeV.match(matriculeA).hasMatch())
+  {
+      ajout=false;
+      qDebug()<<"error houni"<<matriculeA;
+  }
   QString marque=ui->marque->text();
+  if(!marqueV.match(marque).hasMatch())
+  {
+      ajout=false;
+      qDebug()<<"error houni2";
+  }
   QString type=ui->type->text();
-  QString couleur=ui->couleur->text();
+  if(!typeV.match(type).hasMatch())
+  {
+      ajout=false;
+      qDebug()<<"error houni3";
+  }
+  QString couleur=ui->couleur->currentText();
   QDate date_acquisition=ui->date_acquisition->date();
-  Vehicule V(matricule,marque,type,couleur,date_acquisition);
+  Vehicule V(matriculeA,marque,type,couleur,date_acquisition);
   VehiculeController VehiculeC;
+  if(ajout==true)
+  {
   VehiculeC.ajouterVehicule(V);
+  }
   QSqlTableModel* myModel=VehiculeC.afficherVehicules();
     this->ui->table_afficher->setModel(myModel);
   this->ui->affecter_v->setModel(myModel);
@@ -71,14 +96,23 @@ void MainWindow::on_Ajouter_clicked()
 
 
 void MainWindow::on_ajouterP_clicked()
-{
+{ bool ajout=true;
+    QRegularExpression idV("^[0-9][0-9][0-9]$");
     QString id=ui->id->text();
+    if(!idV.match(id).hasMatch())
+      {
+          ajout=false;
+          qDebug()<<"error houni";
+      }
     int taille=ui->taille->text().toInt();
     int nbVehicules=ui->nbvehicules->text().toInt();
     int placesVides=ui->placesvides->text().toInt();
     Parking P(taille,nbVehicules,placesVides,id);
     ParkingController ParkingC;
+    if(ajout==true)
+    {
     ParkingC.ajouterParking(P);
+    }
     QSqlTableModel* myModel=ParkingC.afficherParkings();
       this->ui->table_p->setModel(myModel);
     this->ui->affecter_p->setModel(myModel);
@@ -111,7 +145,7 @@ void MainWindow::on_table_afficher_doubleClicked(const QModelIndex &index)
       this->ui->matricule->setText(V.afficherVehicules()->record(index.row()).value("matriculevehicule").toString());
       this->ui->marque->setText(V.afficherVehicules()->record(index.row()).value("marquevehicule").toString());
       this->ui->type->setText(V.afficherVehicules()->record(index.row()).value("typevehicule").toString());
-      this->ui->couleur->setText(V.afficherVehicules()->record(index.row()).value("couleurvehicule").toString());
+      this->ui->couleur->setCurrentIndex(ui->couleur->findData(V.afficherVehicules()->record(index.row()).value("couleurvehicule").toString(),Qt::DisplayRole));
        this->ui->date_acquisition->setDate(V.afficherVehicules()->record(index.row()).value("date_acquisition").toDate());
       this->setmatricule(V.afficherVehicules()->record(index.row()).value("matriculevehicule").toString());
 }
@@ -122,7 +156,7 @@ void MainWindow::on_Modifier_clicked()
         QString matricule=ui->matricule->text();
         QString marque=ui->marque->text();
         QString type=ui->type->text();
-        QString couleur=ui->couleur->text();
+        QString couleur=ui->couleur->itemData(ui->couleur->currentIndex()).toString();
         QDate date_acquisition=ui->date_acquisition->date();
         Vehicule V(matricule,marque,type,couleur,date_acquisition);
         VehiculeC.modifierVehicule(V,this->getmatricule());
@@ -277,10 +311,10 @@ void MainWindow::on_affecter_clicked()
 
 void MainWindow::on_Mail_clicked()
 { Smtp* smtp;
-    smtp = new Smtp("yyass1215@gmail.com", "Piecegeretout24%", "smtp.gmail.com");
+    smtp = new Smtp("mestiriyassine69@gmail.com", "Piecegeretout123", "smtp.gmail.com");
     //connect(smtp, SIGNAL(clicked()), this, SLOT(on_Mail_clicked()));
 
-    smtp->sendMail("yyass1215@gmail.com", "yyass1215@gmail.com" , "alerte d'inactivité","la vehicule avec la matricule "+this->getmatricule()+ "est inactive,veuillez prendre en consideration cette inactivité. \nCordialement ");
+    smtp->sendMail("mestiriyassine69@gmail.com", "mestiriyassine69@gmail.com" , "alerte d'inactivité","le vehicule avec la matricule "+this->getmatricule()+ " est inactive,veuillez prendre en consideration cette inactivité. \nCordialement ");
 }
 
 void MainWindow::on_pdf_clicked()
@@ -330,4 +364,27 @@ void MainWindow::on_pdf_clicked()
             QTextDocument doc;
             doc.setHtml(strStream);
             doc.print(&printer);
+}
+
+void MainWindow::on_QR_clicked()
+{
+    QString ids;
+            ids="ID: "+getmatricule()+" Session: "+this->getmatricule()+" Date de debut: "+QDate::currentDate().toString();
+            QrCode qr = QrCode::encodeText(ids.toUtf8().constData(), QrCode::Ecc::HIGH);
+
+            // Read the black & white pixels
+            QImage im(qr.getSize(),qr.getSize(), QImage::Format_RGB888);
+            for (int y = 0; y < qr.getSize(); y++) {
+                for (int x = 0; x < qr.getSize(); x++) {
+                    int color = qr.getModule(x, y);  // 0 for white, 1 for black
+
+                    // You need to modify this part
+                    if(color==0)
+                        im.setPixel(x, y,qRgb(254, 254, 254));
+                    else
+                        im.setPixel(x, y,qRgb(0, 0, 0));
+                }
+            }
+            im=im.scaled(200,200);
+            ui->qrlabel->setPixmap(QPixmap::fromImage(im));
 }

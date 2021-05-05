@@ -13,6 +13,7 @@ SOURCES += \
     mainwindow.cpp \
     parking.cpp \
     parkingcontroller.cpp \
+    qr.cpp \
     smtp.cpp \
     vehiculecontroller.cpp \
     vehicules.cpp
@@ -22,6 +23,7 @@ HEADERS += \
     mainwindow.h \
     parking.h \
     parkingcontroller.h \
+    qr.h \
     smtp.h \
     vehiculecontroller.h \
     vehicules.h
