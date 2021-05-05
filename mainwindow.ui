@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -109,7 +109,7 @@
        </rect>
       </property>
      </widget>
-     <widget class="QLabel" name="label">
+     <widget class="QLabel" name="label_Matricule">
       <property name="geometry">
        <rect>
         <x>20</x>
@@ -122,7 +122,7 @@
        <string>Matricule</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_2">
+     <widget class="QLabel" name="label_marque">
       <property name="geometry">
        <rect>
         <x>20</x>
@@ -135,7 +135,7 @@
        <string>Marque</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_3">
+     <widget class="QLabel" name="label_type">
       <property name="geometry">
        <rect>
         <x>20</x>
@@ -148,7 +148,7 @@
        <string>Type</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_4">
+     <widget class="QLabel" name="label_couleur">
       <property name="geometry">
        <rect>
         <x>20</x>
@@ -161,7 +161,7 @@
        <string>Couleur</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_5">
+     <widget class="QLabel" name="label_date">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -297,7 +297,7 @@
      <widget class="QLabel" name="qrlabel">
       <property name="geometry">
        <rect>
-        <x>260</x>
+        <x>190</x>
         <y>350</y>
         <width>81</width>
         <height>71</height>
@@ -361,7 +361,7 @@
        <string>Supprimer</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_6">
+     <widget class="QLabel" name="label_id">
       <property name="geometry">
        <rect>
         <x>20</x>
@@ -374,7 +374,7 @@
        <string>ID</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_7">
+     <widget class="QLabel" name="label_taille">
       <property name="geometry">
        <rect>
         <x>20</x>
@@ -387,7 +387,7 @@
        <string>taille</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_8">
+     <widget class="QLabel" name="label_nbvehicules">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -400,7 +400,7 @@
        <string>nbVéhicules</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_9">
+     <widget class="QLabel" name="label_placesvides">
       <property name="geometry">
        <rect>
         <x>10</x>
