@@ -1,9 +1,12 @@
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "prisonnier.h"
 #include "cellule.h"
 #include "prisonnierController.h"
 #include "celluleController.h"
+#include "smtp.h"
+#include <QRegularExpression>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -95,15 +98,39 @@ void MainWindow::showEvent(QShowEvent *event)
 
 void MainWindow::on_pushButton_clicked()//bouton ajouter
 {
+    bool ajout=true;
+
+    QRegularExpression nomV("^(?=.{1,40}$)[a-zA-Z]+(?:[-'\\s][a-zA-Z]+)*$");
+    QRegularExpression prenomV("^(?=.{1,40}$)[a-zA-Z]+(?:[-'\\s][a-zA-Z]+)*$");
+     QRegularExpression cinV("(?<!\\d)\\d{8}(?!\\d)");
     PrisonnierController prisonnierP;
   QString cin=ui->le_cin->text();
+  if(!cinV.match(cin).hasMatch())
+    {
+        ajout=false;
+        qDebug()<<"erroooor3";
+    }
   QString nom=ui->le_nom->text();
+  if(!nomV.match(nom).hasMatch())
+    {
+        ajout=false;
+        qDebug()<<"erroooor1";
+    }
   QString prenom=ui->le_prenom->text();
+  if(!prenomV.match(prenom).hasMatch())
+    {
+        ajout=false;
+        qDebug()<<"erroooor2";
+    }
   QDate date=ui->le_date->date();
   QString crime=ui->le_crime->text();
   Prisonnier P(nom,prenom,crime,cin,date);
   PrisonnierController prisonnierC;
-  prisonnierC.ajouterPrisonnier(P);
+  if(ajout==true)
+    {
+    prisonnierC.ajouterPrisonnier(P);
+    }
+
   QSqlTableModel* myModel=prisonnierP.afficherPrisonniers();
   this->ui->tab_prisonnier->setModel(myModel);
   ui->tab_prisonnier->hideColumn(6);
@@ -327,4 +354,12 @@ void MainWindow::on_affecter_2_clicked() // affichage affectation
      ui->affect->hideColumn(4);
      ui->affect->hideColumn(5);
 
+}
+
+void MainWindow::on_pushButton_10_clicked()
+{   Smtp* smtp;
+    QString cause=ui->la_cause->text();
+    smtp = new Smtp("youssefbenyahia6@gmail.com", "200369Yc", "smtp.gmail.com");
+        //connect(smtp, SIGNAL(clicked()), this, SLOT(on_Mail_clicked()));
+    smtp->sendMail("youssefbenyahia6@gmail.com", "youssefbenyahia6@gmail.com" , "alerte d'inactivité","la cause "+cause+" est inactive,veuillez prendre en consideration cette inactivité. \nCordialement ");
 }

@@ -71,6 +71,8 @@ private slots:
 
     void on_affecter_2_clicked();
 
+    void on_pushButton_10_clicked();
+
 private:
     Ui::MainWindow *ui;
     PrisonnierController P;

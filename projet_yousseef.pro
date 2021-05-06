@@ -1,6 +1,6 @@
 QT       += core gui
 QT       += core gui charts
-QT +=sql
+QT +=sql network
 
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -17,7 +17,8 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     prisonnier.cpp \
-    prisonnierController.cpp
+    prisonnierController.cpp \
+    smtp.cpp
 
 HEADERS += \
     cellule.h \
@@ -25,7 +26,8 @@ HEADERS += \
     configg.h \
     mainwindow.h \
     prisonnier.h \
-    prisonnierController.h
+    prisonnierController.h \
+    smtp.h
 
 FORMS += \
     mainwindow.ui
