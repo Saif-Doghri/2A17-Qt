@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>affich.png</file>
+        <file>ajout.png</file>
+        <file>click.mp3</file>
+        <file>modif..png</file>
+        <file>supprime.png</file>
+    </qresource>
+</RCC>
